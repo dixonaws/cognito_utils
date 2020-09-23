@@ -25,7 +25,7 @@ def create_new_user(str_user_pool_id, str_username, str_email, client):
 
 # create_new_user()
 
-def first_sign_in(str_client_id, str_user_pool_id, str_username, client):
+def first_sign_in(str_client_id, str_user_pool_id, str_username, str_new_password, client):
     first_signin_response=client.initiate_auth(
         AuthFlow="USER_PASSWORD_AUTH",
         AuthParameters={
@@ -43,7 +43,7 @@ def first_sign_in(str_client_id, str_user_pool_id, str_username, client):
         ChallengeName="NEW_PASSWORD_REQUIRED",
         ChallengeResponses={
             "USERNAME": str_username,
-            "NEW_PASSWORD": "Password123#"
+            "NEW_PASSWORD": str_new_password
         },
         Session=first_signin_response['Session']
     )
@@ -53,12 +53,12 @@ def first_sign_in(str_client_id, str_user_pool_id, str_username, client):
 # first_sign_in
 
 def usage():
-    print("Syntax: create_user.py --username=<username> --pool-id=<user pool id> --client-id=<app client id> --email=user@domain --region=aws-region-code")
+    print("Syntax: create_user.py --username=<username> --new_password=<new password> --pool-id=<user pool id> --client-id=<app client id> --email=user@domain --region=aws-region-code")
     print("All variables are required.")
 def main(argv):
 
     try:
-        opts, args=getopt.getopt(argv, '', ["username=", "pool-id=", "client-id=", "region=", "email="])
+        opts, args=getopt.getopt(argv, '', ["username=", "pool-id=", "client-id=", "region=", "email=", "new_password="])
     except getopt.GetoptError as e:
         print(e.msg)
         usage()
@@ -74,6 +74,8 @@ def main(argv):
             str_region=arg
         elif opt in ("-e", "--email"):
             str_email=arg
+        elif opt in ("-new_password"):
+            str_new_password=arg
         else:
             usage()
         # if opt
@@ -83,6 +85,7 @@ def main(argv):
     print("-----------")
     try:
         print('username: ' + str_username)
+        print('new password: ' + str_new_password)
         print('user pool id: ' + str_user_pool_id)
         print('app client id: ' + str_client_id)
         print('email: ' + str_email)
@@ -97,7 +100,7 @@ def main(argv):
     create_new_user(str_user_pool_id, str_username, str_email, client)
 
     print("Performing first sign-in flow to set password... ")
-    first_sign_in(str_client_id, str_user_pool_id, str_username, client)
+    first_sign_in(str_client_id, str_user_pool_id, str_username, str_new_password, client)
 
 # main()
 
