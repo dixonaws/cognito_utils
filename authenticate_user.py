@@ -12,8 +12,8 @@ def sign_in(str_client_id, str_user_pool_id, str_username, str_password, client)
         },
         ClientId=str_client_id
     )
-
-    print(signin_response)
+    
+    print(signin_response['AuthenticationResult']['IdToken'])
 
 
 # sign_in
